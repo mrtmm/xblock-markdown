@@ -38,10 +38,10 @@ requirements: base_requirements test_requirements ## Installs all requirements n
 
 quality:  ## Run quality tests and checks
 	make selfcheck
-	pylint html_xblock tests
-	pycodestyle html_xblock tests --config=pylintrc
-	pydocstyle html_xblock tests --config=pylintrc
-	isort --check-only --diff --recursive tests html_xblock
+	pylint markdown_xblock tests
+	pycodestyle markdown_xblock tests --config=pylintrc
+	pydocstyle markdown_xblock tests --config=pylintrc
+	isort --check-only --diff --recursive tests markdown_xblock
 
 unit-coverage: clean ## Run coverage and unit tests
 	mkdir var/

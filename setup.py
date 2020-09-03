@@ -1,4 +1,4 @@
-"""Setup for html XBlock."""
+"""Setup for Markdown XBlock."""
 
 import os
 
@@ -22,22 +22,33 @@ def package_data(pkg, roots):
 
 
 setup(
-    name='html-xblock',
+    name='markdown-xblock',
     version='1.0.0',
-    description='HTML XBlock will help creating and using a secure and easy-to-use HTML blocks',
-    license='AGPL v3',
+    description='Markdown XBlock provides editing course content in Markdown.',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
+    license='AGPL-3.0',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Framework :: Django',
+        'Intended Audience :: Education',
+        'License :: OSI Approved :: GNU Affero General Public License v3',
+        'Topic :: Education :: Computer Aided Instruction (CAI)',
+        'Topic :: Education',
+    ],
     packages=[
-        'html_xblock',
+        'markdown_xblock',
     ],
     install_requires=[
         'XBlock',
-        'bleach',
+        'markdown2>=2.3.9',
+        'Pygments>=2.0.1'
     ],
     entry_points={
         'xblock.v1': [
-            'html5 = html_xblock:HTML5XBlock',
-            'excluded_html5 = html_xblock:ExcludedHTML5XBlock',
+            'markdown = markdown_xblock:MarkdownXBlock'
         ]
     },
-    package_data=package_data("html_xblock", ["static", "public"]),
+    package_data=package_data("markdown_xblock", ["static", "public"]),
+    
 )

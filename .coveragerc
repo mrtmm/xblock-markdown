@@ -1,7 +1,7 @@
 [run]
 branch = True
 data_file = .coverage
-source=html_xblock
+source=markdown_xblock
 omit =
     *.tx*
     *static*

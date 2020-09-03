@@ -24,57 +24,18 @@ function openTab(evt, tabName) {
 }
 
 function configureTheEditor(data) {
-  const contentSelector = "textarea#html5-textarea";
+  const contentSelector = "textarea#markdown-textarea";
   const languageWrapper = document.querySelectorAll(".wrapper-view, .window-wrap");
   const directionality = (languageWrapper.length > 0) ? languageWrapper.dir : "ltr";
   var editor;
 
-  if (data.editor === "visual") {
-    tinymce.remove(contentSelector);
-    editor = tinymce.init({
-      skin_url: data.skin_url,
-      theme: "modern",
-      schema: "html5",
-      convert_urls: false,
-      directionality: directionality,
-      selector: contentSelector,
-      menubar: false,
-      statusbar: false,
-      valid_elements: "*[*]",
-      extended_valid_elements: "*[*]",
-      valid_children: "+body[style]",
-      invalid_elements: "",
-      font_formats: FONTS,
-      toolbar: "formatselect | fontselect | bold italic underline forecolor codesample | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent blockquote | link unlink image | code",
-      external_plugins: data.external_plugins,
-      formats: {
-        code: {
-          inline: 'code'
-        }
-      },
-      visual: false,
-      image_advtab: true,
-      block_formats: "Paragraph=p;Preformatted=pre;Heading 3=h3;Heading 4=h4;Heading 5=h5;Heading 6=h6",
-      width: '100%',
-      height: '315px',
-      browser_spellcheck: true,
-      codemirror: {
-        width: 770,
-        height: 454,
-        saveCursorPosition: false, // Caret Markers were introducing invalid chars (https://github.com/christiaan/tinymce-codemirror/issues/26)
-        config: {
-          mode: 'text/html',
-        }
-      }
-    });
-  } else {
-    editor = CodeMirror.fromTextArea(document.querySelectorAll(contentSelector)[0], {
-      mode: "text/html",
-      lineNumbers: true,
-      matchBrackets: true,
-      lineWrapping: true,
-    });
-  }
+  editor = CodeMirror.fromTextArea(document.querySelectorAll(contentSelector)[0], {
+    mode: "markdown",
+    lineNumbers: true,
+    matchBrackets: true,
+    lineWrapping: true,
+    theme: "default"
+  });
 
   return editor;
 }
@@ -198,7 +159,7 @@ function extractXBlockFields() {
   return fields;
 }
 
-function HTML5XBlock(runtime, element, data) {
+function MarkdownXBlock(runtime, element, data) {
   document.getElementById("default-tab").click();  // Will open the XBlock by showing the default tab
 
   const editor = configureTheEditor(data);
@@ -208,7 +169,7 @@ function HTML5XBlock(runtime, element, data) {
   function studioSubmit() {
     const ContentHandlerUrl = runtime.handlerUrl(element, "update_content");
     const SettingsHandlerUrl = runtime.handlerUrl(element, "submit_studio_edits");
-    const content = (data.editor === "visual") ? tinymce.get("html5-textarea").getContent() : editor.getValue();
+    const content = editor.getValue();
     const fields_data = getSettingsValues(fields);
     var errorMessage = "This may be happening because of an error with our server or your internet connection. Try refreshing the page or making sure you are online.";
 
