@@ -23,7 +23,7 @@ def package_data(pkg, roots):
 
 setup(
     name='markdown-xblock',
-    version='1.0.0',
+    use_scm_version=True,
     description='Markdown XBlock provides editing course content in Markdown.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -43,6 +43,9 @@ setup(
         'XBlock',
         'markdown2>=2.3.9',
         'Pygments>=2.0.1'
+    ],
+    setup_requires=[
+        'setuptools-scm',
     ],
     entry_points={
         'xblock.v1': [
