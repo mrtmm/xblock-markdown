@@ -9,7 +9,7 @@ and displays it as HTML.
 You may install the markdown-xblock using its setup.py, or if you prefer to use pip, run:
 
 ```shell
-pip install https://github.com/citynetwork/xblock-html.git
+pip install https://github.com/citynetwork/xblock-markdown.git
 ```
 You may specify the `-e` flag if you intend to develop on the repo.
 
