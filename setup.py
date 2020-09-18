@@ -53,5 +53,4 @@ setup(
         ]
     },
     package_data=package_data("markdown_xblock", ["static", "public"]),
-    
 )
