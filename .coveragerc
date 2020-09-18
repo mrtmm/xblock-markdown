@@ -1,8 +1,0 @@
-[run]
-branch = True
-data_file = .coverage
-source=markdown_xblock
-omit =
-    *.tx*
-    *static*
-    env
