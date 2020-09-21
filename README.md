@@ -67,20 +67,14 @@ devstack's `~/workspace/src`, ssh into the appropriate docker container (`make l
 run `pip install -e /edx/src/xblock-html`, and restart the service(s).
 
 
-### Setting the requirements up
-Hitting the following command will install in your python environment all the requirements you need for this project:
-
-```shell
-$ make requirements
-```
-
 ### Running tests
-Tests are essential for this project to keep all its features working as expected. To check your changes you can use:
+The testing framework is built on [tox](https://tox.readthedocs.io/en/latest/). After installing tox, you can run `tox` from your Git checkout of this repository.
 
+To throw away and rebuild the testing environment, run:
 ```shell
-$ make test
+$ tox -r
 ```
-Or if you want to check the code quality only, hit:
+For running PEP-8 checks only:
 ```shell
-$ make quality
+$ tox -e flake8
 ```
