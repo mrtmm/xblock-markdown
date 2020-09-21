@@ -27,6 +27,7 @@ setup(
     description='Markdown XBlock provides editing course content in Markdown.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
+    url='https://github.com/citynetwork/xblock-markdown',
     license='AGPL-3.0',
     classifiers=[
         'Development Status :: 4 - Beta',
