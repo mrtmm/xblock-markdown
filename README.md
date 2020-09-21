@@ -1,4 +1,4 @@
-[![PyPI version](https://badge.fury.io/py/xblock-markdown.svg)](https://pypi.python.org/pypi/xblock-markdown)
+[![PyPI version](https://badge.fury.io/py/markdown-xblock.svg)](https://pypi.python.org/pypi/markdown-xblock)
 
 # Markdown XBlock
 ### Based on the [HTML XBlock by OpenCraft](https://github.com/open-craft/xblock-html)
