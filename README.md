@@ -1,3 +1,5 @@
+[![PyPI version](https://badge.fury.io/py/xblock-markdown.svg)](https://pypi.python.org/pypi/xblock-markdown)
+
 # Markdown XBlock
 ### Based on the [HTML XBlock by OpenCraft](https://github.com/open-craft/xblock-html)
 
