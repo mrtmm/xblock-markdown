@@ -11,8 +11,15 @@ and displays it as HTML.
 You may install the markdown-xblock using its setup.py, or if you prefer to use pip, run:
 
 ```shell
-pip install git+https://github.com/citynetwork/xblock-markdown.git
+pip install markdown-xblock
 ```
+
+If you prefer to install directly from Git, run:
+
+```shell
+pip install git+https://github.com/citynetwork/markdown-xblock.git
+```
+
 You may specify the `-e` flag if you intend to develop on the repo.
 
 The minimum supported Python version is 3.5.
