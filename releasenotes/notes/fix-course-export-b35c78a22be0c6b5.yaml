@@ -1,0 +1,6 @@
+---
+other:
+  - |
+    Markdown content is now exported between opening and closing
+    <markdown></markdown> tags instead of the markdown element's "data"
+    attribute.

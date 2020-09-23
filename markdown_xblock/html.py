@@ -125,7 +125,7 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         return [
             ('MarkdownXBlock',
              """<vertical_demo>
-                    <markdown data="
+                    <markdown>
                         # This is h1
                         ## This is h2
                         ```
@@ -140,7 +140,7 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
                         1. list
                         *This is italic*
                         **This is bold**
-                    "/>
+                    </markdown>
                 </vertical_demo>
              """),
         ]
@@ -261,3 +261,31 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
                 fields.append(field_info)
 
         return fields
+
+    @classmethod
+    def parse_xml(cls, node, runtime, keys, id_generator):
+        """
+        Use `node` to construct a new block.
+        """
+        block = runtime.construct_xblock_from_class(cls, keys)
+
+        # Attributes become fields.
+        for name, value in list(node.items()):  # lxml has no iteritems
+            cls._set_field_if_present(block, name, value, {})
+
+        # Read markdown content and add to data field.
+        if node.tag == "markdown":
+            data = node.text
+            if data:
+                block.data = data
+        return block
+
+    def add_xml_to_node(self, node):
+        """
+        For exporting, set data on etree.Element `node`.
+        """
+
+        node.tag = 'markdown'
+        node.set('xblock-family', self.entry_point)
+        node.set('display_name', self.display_name)
+        node.text = self.data
