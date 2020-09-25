@@ -27,6 +27,12 @@ The minimum supported Python version is 3.5.
 To enable this block, add `"markdown"` to the course's advanced module list. 
 The option `Markdown` will appear in the advanced components.
 
+Once you've added a new `Markdown` component to your course, you can also add custom CSS classes to the component
+by selecting `EDIT`/`Settings` and adding to the `classes` list (Note: use double quotes `" "`). Example:
+```
+["custom-css-class-1", "custom-css-class-2"]
+```
+
 The `Markdown` block uses [markdown2](https://pypi.org/project/markdown2/) to translate the content into HTML, 
 by default the following extras are included:
 

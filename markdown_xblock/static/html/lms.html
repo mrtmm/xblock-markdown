@@ -1,1 +1,1 @@
-<div class="markdown_block">{{ self.html | safe }}</div>
+<div class="markdown_block{% if self.classes %} {{ self.classes | join:' ' }}{% endif %}">{{ self.html | safe }}</div>

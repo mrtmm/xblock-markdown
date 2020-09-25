@@ -6,7 +6,7 @@ import markdown2
 import pkg_resources
 from django.conf import settings as django_settings
 from xblock.core import XBlock
-from xblock.fields import Scope, String
+from xblock.fields import List, Scope, String
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 from xblockutils.settings import XBlockWithSettingsMixin
@@ -55,13 +55,18 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         scope=Scope.settings,
         default=_('Markdown')
     )
+    classes = List(
+        help=_('Custom CSS classes to add to this component'),
+        scope=Scope.settings,
+        default=[]
+    )
     data = String(
         help=_('The Markdown content for this module'),
         default=u'',
         scope=Scope.content
     )
     editor = 'markdown'
-    editable_fields = ('display_name',)
+    editable_fields = ('display_name', 'classes')
 
     @staticmethod
     def resource_string(path):
