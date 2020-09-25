@@ -70,7 +70,7 @@ XBLOCK_SETTINGS:
 ## Development
 If you'd like to develop on this repo or test it in [devstack](https://github.com/edx/devstack), clone this repo to your
 devstack's `~/workspace/src`, ssh into the appropriate docker container (`make lms-shell` and/or `make studio-shell`),
-run `pip install -e /edx/src/xblock-html`, and restart the service(s).
+run `pip install -e /edx/src/markdown-xblock`, and restart the service(s).
 
 
 ### Running tests
