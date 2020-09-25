@@ -27,7 +27,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         field_data = DictFieldData({'data': '# This is h1'})
         block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
         fragment = block.student_view()
-        self.assertIn('<div class="markdown_block"><h1>This is h1</h1>\n</div>\n', fragment.content)
+        self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n', fragment.content)
 
     def test_render_with_unsafe(self):
         """
@@ -38,7 +38,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
         fragment = block.student_view()
         self.assertIn(
-            '<div class="markdown_block"><p>[HTML_REMOVED]This is h1[HTML_REMOVED]</p>\n</div>\n',
+            '<div class="markdown_xblock"><p>[HTML_REMOVED]This is h1[HTML_REMOVED]</p>\n</div>\n',
             fragment.content
         )
 
@@ -56,7 +56,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         with patch('markdown_xblock.html.get_xblock_settings') as get_settings_mock:
             get_settings_mock.return_value = settings
             fragment = block.student_view()
-            self.assertIn('<div class="markdown_block"><h1>This is h1</h1>\n</div>\n',
+            self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n',
                           fragment.content)
 
     def test_substitution_no_system(self):
@@ -66,7 +66,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         field_data = DictFieldData({'data': '%%USER_ID%% %%COURSE_ID%%'})
         block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
         fragment = block.student_view()
-        self.assertIn('<div class="markdown_block"><p>%%USER_ID%% %%COURSE_ID%%</p>\n</div>\n', fragment.content)
+        self.assertIn('<div class="markdown_xblock"><p>%%USER_ID%% %%COURSE_ID%%</p>\n</div>\n', fragment.content)
 
     def test_substitution_not_found(self):
         """
@@ -76,7 +76,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
         block.system = Mock(anonymous_student_id=None)
         fragment = block.student_view()
-        self.assertIn('<div class="markdown_block"><p>USER_ID%% %%COURSE_ID%%</p>\n</div>\n', fragment.content)
+        self.assertIn('<div class="markdown_xblock"><p>USER_ID%% %%COURSE_ID%%</p>\n</div>\n', fragment.content)
 
     def test_user_id_substitution(self):
         """
@@ -86,7 +86,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
         block.system = Mock(anonymous_student_id='test_user')
         fragment = block.student_view()
-        self.assertIn('<div class="markdown_block"><p>test_user</p>\n</div>\n', fragment.content)
+        self.assertIn('<div class="markdown_xblock"><p>test_user</p>\n</div>\n', fragment.content)
 
     def test_course_id_substitution(self):
         """
@@ -98,4 +98,4 @@ class TestMarkdownXBlock(unittest.TestCase):
         course_locator_mock.html_id = Mock(return_value='test_course')
         block.system = Mock(course_id=course_locator_mock)
         fragment = block.student_view()
-        self.assertIn('<div class="markdown_block"><p>test_course</p>\n</div>\n', fragment.content)
+        self.assertIn('<div class="markdown_xblock"><p>test_course</p>\n</div>\n', fragment.content)
