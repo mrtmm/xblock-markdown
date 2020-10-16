@@ -3,8 +3,6 @@
 import logging
 import os
 
-from lxml import etree
-from lxml.etree import ElementTree, XMLParser
 import markdown2
 from path import Path as path
 import pkg_resources
@@ -33,10 +31,6 @@ DEFAULT_SETTINGS = {
     "extras": DEFAULT_EXTRAS,
     "safe_mode": True
 }
-
-XML_PARSER = XMLParser(dtd_validation=False, load_dtd=False,
-                       remove_comments=True, remove_blank_text=True,
-                       encoding='utf-8')
 
 
 def get_xblock_settings():
@@ -277,10 +271,17 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         return fields
 
     @classmethod
-    def load_definition(cls, xml_object, system, location, id_generator):
-        """Load markdown content from file."""
+    def parse_xml(cls, node, runtime, keys, id_generator):
+        """
+        Use `node` to construct a new block.
+        """
+        block = runtime.construct_xblock_from_class(cls, keys)
 
-        filename = xml_object.get('filename')
+        # Read markdown content from file and add to editor.
+        url_name = node.get('url_name', node.get('slug'))
+        location = id_generator.create_definition(node.tag, url_name)
+
+        filename = node.get('filename')
         pointer_path = "{category}/{url_path}".format(
             category='markdown',
             url_path=location.block_id.replace(':', '/')
@@ -288,92 +289,41 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         base = path(pointer_path).dirname()
         filepath = u"{base}/{name}.md".format(base=base, name=filename)
 
-        with system.resources_fs.open(filepath, encoding='utf-8') as infile:
+        with runtime.resources_fs.open(filepath, encoding='utf-8') as infile:
             markdown = infile.read()
-            definition = {'data': markdown}
-            return definition
-
-    @classmethod
-    def parse_xml(cls, node, runtime, keys, id_generator):
-        """
-        Use `node` to construct a new block.
-        """
-
-        url_name = node.get('url_name', node.get('slug'))
-        def_id = id_generator.create_definition(node.tag, url_name)
-
-        filepath = u'{category}/{name}.{ext}'.format(
-            category=node.tag,
-            name=url_name.replace(':', '/'),
-            ext='xml')
-
-        definition_xml = {}
-        with runtime.resources_fs.open(filepath) as xml_file:
-            definition_xml = etree.parse(xml_file, parser=XML_PARSER).getroot()
-
-        definition = cls.load_definition(definition_xml, runtime, def_id, id_generator)
-
-        block = runtime.construct_xblock_from_class(cls, keys)
-        block.data = definition.get('data')
+            block.data = markdown
 
         # Attributes become fields.
-        for name, value in list(definition_xml.items()):  # lxml has no iteritems
+        for name, value in list(node.items()):  # lxml has no iteritems
             cls._set_field_if_present(block, name, value, {})
 
         return block
-
-    def definition_to_xml(self, resource_fs):
-        """Write <markdown filename="" [attrs="..."]> to filename.xml, and the
-        markdown string to filename.md.
-        """
-
-        # Write markdown to file, return an empty tag
-        pathname = self.url_name.replace(':', '/')
-        filepath = u'{category}/{pathname}.md'.format(
-            category=self.category,
-            pathname=pathname
-        )
-
-        resource_fs.makedirs(os.path.dirname(filepath), recreate=True)
-        with resource_fs.open(filepath, 'wb') as filestream:
-            html_data = self.data.encode('utf-8')
-            filestream.write(html_data)
-
-        # write out the relative name
-        relname = path(pathname).basename()
-
-        elt = etree.Element('markdown')
-        elt.set("filename", relname)
-        return elt
 
     def add_xml_to_node(self, node):
         """
         For exporting, set data on etree.Element `node`.
         """
 
-        # Get the definition
-        xml_object = self.definition_to_xml(self.runtime.export_fs)
-
-        # If xml_object is None, we don't know how to serialize this node, but
-        # we shouldn't crash out the whole export for it.
-        if xml_object is None:
-            return
-
-        # Set the tag on both nodes so we get the file path right.
-        xml_object.tag = self.category
-        node.tag = self.category
-
-        xml_object.set('xblock-family', self.entry_point)
-        xml_object.set('display_name', self.display_name)
-        xml_object.set('classes', str(self.classes))
-
-        url_path = self.url_name.replace(':', '/')
-
-        filepath = u'{category}/{name}.{ext}'.format(
+        # Write markdown data to file
+        pathname = self.url_name.replace(':', '/')
+        filepath = u'{category}/{pathname}.md'.format(
             category=self.category,
-            name=self.location.run if self.category == 'course' else url_path,
-            ext='xml'
+            pathname=pathname
         )
-        self.runtime.export_fs.makedirs(os.path.dirname(filepath), recreate=True)
-        with self.runtime.export_fs.open(filepath, 'wb') as fileobj:
-            ElementTree(xml_object).write(fileobj, pretty_print=True, encoding='utf-8')
+
+        self.runtime.export_fs.makedirs(
+            os.path.dirname(filepath),
+            recreate=True)
+
+        with self.runtime.export_fs.open(filepath, 'wb') as filestream:
+            markdown_data = self.data.encode('utf-8')
+            filestream.write(markdown_data)
+
+        # Write out the markdown file name
+        filename = path(pathname).basename()
+
+        node.tag = self.category
+        node.set("filename", filename)
+        node.set('xblock-family', self.entry_point)
+        node.set('display_name', self.display_name)
+        node.set('classes', str(self.classes))
