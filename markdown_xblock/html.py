@@ -29,7 +29,7 @@ DEFAULT_EXTRAS = [
 ]
 DEFAULT_SETTINGS = {
     "extras": DEFAULT_EXTRAS,
-    "safe_mode": True
+    "safe_mode": 'replace'
 }
 
 
@@ -231,8 +231,10 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         A property that returns the markdown content data as html.
         """
         settings = get_xblock_settings()
-        extras = settings.get("extras", DEFAULT_EXTRAS)
-        safe_mode = settings.get("safe_mode", True)
+        extras = settings.get("extras",
+                              DEFAULT_SETTINGS['extras'])
+        safe_mode = settings.get("safe_mode",
+                                 DEFAULT_SETTINGS['safe_mode'])
 
         html = markdown2.markdown(
             self.data,

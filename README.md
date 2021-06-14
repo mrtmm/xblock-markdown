@@ -45,7 +45,14 @@ by default the following extras are included:
 It is possible to configure more [extras](https://github.com/trentm/python-markdown2/wiki/Extras), by adding to the extras list under `"markdown"` key in `XBLOCK_SETTINGS`
 at `/edx/etc/{studio|lms}.yml`
 
-By default, the `safe_mode` for `markdown2` library is enabled, which means that writing inline HTML is not allowed and if written, all tags will be replaced with `[HTML_REMOVED]`. To disable this setting and allow inline HTML, you'll need to set the `safe_mode` to `False` in `XBLOCK_SETTINGS`.
+By default, the `safe_mode` for `markdown2` library is enabled and set
+to `replace`, which means that writing inline HTML is not allowed and
+if written, all tags will be replaced with `[HTML_REMOVED]`. You can
+also set `safe_mode` to `escape`, which only replaces `<`, `>` and `&`
+with `&lt;`, `&gt;` and `&amp;`. To disable safe mode altogether and
+allow inline HTML, you'll need to set `safe_mode` to `False` or `None`
+in `XBLOCK_SETTINGS`. Please note that setting `safe_mode` to the
+empty string (`''`) *also* disables safe mode.
 
 Example:
 ```
@@ -64,7 +71,7 @@ XBLOCK_SETTINGS:
             - use-file-vars
             - wiki-tables
             - tag-friendly
-        safe_mode: True
+        safe_mode: replace
 ```
 
 ## Development

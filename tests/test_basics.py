@@ -9,6 +9,8 @@ from mock import Mock, patch
 from xblock.field_data import DictFieldData
 from xblock.test.tools import TestRuntime
 
+from markdown2 import MarkdownError
+
 import markdown_xblock
 from markdown_xblock.html import DEFAULT_EXTRAS
 
@@ -29,10 +31,14 @@ class TestMarkdownXBlock(unittest.TestCase):
         fragment = block.student_view()
         self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n', fragment.content)
 
-    def test_render_with_unsafe(self):
+    def test_render_default_settings(self):
         """
         Test a basic rendering with default settings.
-        Expects the content to be sanitized.
+
+        Expects the content to be sanitized by injecting
+        [HTML_REMOVED] in place of the HTML tags, and the sentence
+        being wrapped in a <p> block (since the <h1> tags are no
+        longer interpreted as HTML).
         """
         field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
         block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
@@ -41,6 +47,92 @@ class TestMarkdownXBlock(unittest.TestCase):
             '<div class="markdown_xblock"><p>[HTML_REMOVED]This is h1[HTML_REMOVED]</p>\n</div>\n',
             fragment.content
         )
+
+    def test_render_invalid_safe_mode(self):
+        """
+        Test a basic rendering with default settings.
+
+        Expects the rendering to fail since safe_mode is not set to
+        one of 'replace', 'escape', True or False.
+        """
+        field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        settings = {
+            "extras": DEFAULT_EXTRAS,
+            "safe_mode": 'this is an invalid safe mode'
+        }
+        with patch('markdown_xblock.html.get_xblock_settings') as get_settings_mock:
+            get_settings_mock.return_value = settings
+            with self.assertRaises(MarkdownError):
+                _ = block.student_view()
+
+    def test_render_replace_inline_html(self):
+        """
+        Test a basic rendering with safe_mode explicitly set to 'replace'.
+
+        Expects the content to be sanitized by injecting
+        [HTML_REMOVED] in place of the HTML tags, and the sentence
+        being wrapped in a <p> block (since the <h1> tags are no
+        longer interpreted as HTML).
+        """
+        field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        settings = {
+            "extras": DEFAULT_EXTRAS,
+            "safe_mode": 'replace'
+        }
+        with patch('markdown_xblock.html.get_xblock_settings') as get_settings_mock:
+            get_settings_mock.return_value = settings
+            fragment = block.student_view()
+            self.assertIn(
+                '<div class="markdown_xblock"><p>[HTML_REMOVED]This is h1[HTML_REMOVED]</p>\n</div>\n',
+                fragment.content
+            )
+
+    def test_render_replace_inline_html_boolean_setting(self):
+        """
+        Test a basic rendering with safe_mode set to True (instead of 'replace').
+
+        Expects the content to be sanitized by injecting
+        [HTML_REMOVED] in place of the HTML tags, and the sentence
+        being wrapped in a <p> block (since the <h1> tags are no
+        longer interpreted as HTML).
+        """
+        field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        settings = {
+            "extras": DEFAULT_EXTRAS,
+            "safe_mode": True
+        }
+        with patch('markdown_xblock.html.get_xblock_settings') as get_settings_mock:
+            get_settings_mock.return_value = settings
+            fragment = block.student_view()
+            self.assertIn(
+                '<div class="markdown_xblock"><p>[HTML_REMOVED]This is h1[HTML_REMOVED]</p>\n</div>\n',
+                fragment.content
+            )
+
+    def test_render_escape_inline_html(self):
+        """
+        Test a basic rendering with safe_mode set to 'escape'
+
+        Expects the content to be sanitized by escaping < and > with &lt; and &gt;
+        and the sentence being wrapped in a <p> block (since the <h1> tags are
+        no longer interpreted as HTML).
+        """
+        field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        settings = {
+            "extras": DEFAULT_EXTRAS,
+            "safe_mode": 'escape'
+        }
+        with patch('markdown_xblock.html.get_xblock_settings') as get_settings_mock:
+            get_settings_mock.return_value = settings
+            fragment = block.student_view()
+            self.assertIn(
+                '<div class="markdown_xblock"><p>&lt;h1&gt;This is h1&lt;/h1&gt;</p>\n</div>\n',
+                fragment.content
+            )
 
     def test_render_allow_inline_html(self):
         """
