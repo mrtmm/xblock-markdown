@@ -151,6 +151,76 @@ class TestMarkdownXBlock(unittest.TestCase):
             self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n',
                           fragment.content)
 
+    def test_render_url_safe_mode_replace(self):
+        """
+        Test rendering a URL with safe_mode set to 'replace'.
+        """
+        field_data = DictFieldData(
+            {'data': '[test1](https://test.com/courses/course-v1:Org+Class+Version/about) [test2](https://test.com/courses/course-v1%3AOrg%2BClass%2BVersion/about)'}  # noqa: E501
+        )
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        settings = {
+            "extras": DEFAULT_EXTRAS,
+            "safe_mode": 'replace'
+        }
+        with patch('markdown_xblock.html.get_xblock_settings') as get_settings_mock:
+            get_settings_mock.return_value = settings
+            fragment = block.student_view()
+            # in replace mode, "+" in URLs turns into whitespace
+            self.assertIn(
+                '<a href="https://test.com/courses/course-v1:Org Class Version/about">test1</a>',
+                fragment.content
+            )
+            self.assertIn(
+                '<a href="https://test.com/courses/course-v1%3AOrg%2BClass%2BVersion/about">test2</a>',
+                fragment.content
+            )
+
+    def test_render_url_safe_mode_escape(self):
+        """
+        Test rendering a URL with safe_mode set to 'replace'.
+        """
+        field_data = DictFieldData(
+            {'data': '[test1](https://test.com/courses/course-v1:Org+Class+Version/about) [test2](https://test.com/courses/course-v1%3AOrg%2BClass%2BVersion/about)'}  # noqa: E501
+        )
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        settings = {
+            "extras": DEFAULT_EXTRAS,
+            "safe_mode": 'escape'
+        }
+        with patch('markdown_xblock.html.get_xblock_settings') as get_settings_mock:
+            get_settings_mock.return_value = settings
+            fragment = block.student_view()
+            # in escape mode, "+" in URLs turns into whitespace
+            self.assertIn(
+                '<a href="https://test.com/courses/course-v1:Org Class Version/about">test1</a>',
+                fragment.content
+            )
+            self.assertIn(
+                '<a href="https://test.com/courses/course-v1%3AOrg%2BClass%2BVersion/about">test2</a>',
+                fragment.content
+            )
+
+    def test_render_url_no_safe_mode(self):
+        """
+        Test rendering a URL with safe_mode disabled.
+        """
+        field_data = DictFieldData(
+            {'data': '[test](https://test.com/courses/course-v1:Org+Class+Version/about)'}
+        )
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        settings = {
+            "extras": DEFAULT_EXTRAS,
+            "safe_mode": False
+        }
+        with patch('markdown_xblock.html.get_xblock_settings') as get_settings_mock:
+            get_settings_mock.return_value = settings
+            fragment = block.student_view()
+            self.assertIn(
+                '<a href="https://test.com/courses/course-v1:Org+Class+Version/about">test</a>',
+                fragment.content
+            )
+
     def test_substitution_no_system(self):
         """
         Test that the substitution is not performed when `system` is not present inside XBlock.
