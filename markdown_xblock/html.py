@@ -70,6 +70,7 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
     )
     editor = 'markdown'
     editable_fields = ('display_name', 'classes')
+    show_in_read_only_mode = True
 
     @staticmethod
     def resource_string(path):
