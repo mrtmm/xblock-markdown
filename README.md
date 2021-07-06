@@ -22,7 +22,7 @@ pip install git+https://github.com/citynetwork/markdown-xblock.git
 
 You may specify the `-e` flag if you intend to develop on the repo.
 
-The minimum supported Python version is 3.5.
+The minimum supported Python version is 3.8.
 
 To enable this block, add `"markdown"` to the course's advanced module list. 
 The option `Markdown` will appear in the advanced components.
