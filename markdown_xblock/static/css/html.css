@@ -42,3 +42,19 @@
 .tabcontent {
     display: none;
 }
+
+.markdown_xblock table {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+    font-size: 16px;
+}
+.markdown_xblock th, td {
+    padding: 10px;
+    border: 1px solid #c8c8c8;
+    font-size: 14px;
+}
+.markdown_xblock th {
+    background: #eee;
+    font-weight: bold;
+}

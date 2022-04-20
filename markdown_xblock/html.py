@@ -90,6 +90,7 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         frag.add_javascript(self.resource_string('public/plugins/codesample/js/prism.js'))
 
         frag.add_css(self.resource_string('static/css/pygments.css'))
+        frag.add_css(self.resource_string('static/css/html.css'))
 
         return frag
 
