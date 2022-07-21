@@ -120,6 +120,13 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
 
         return frag
 
+    @XBlock.supports("multi_device")
+    def public_view(self, context=None):
+        """
+        Return the student_view when course is set to be public.
+        """
+        return self.student_view(context)
+
     @XBlock.json_handler
     def update_content(self, data, suffix=''):  # pylint: disable=unused-argument
         """

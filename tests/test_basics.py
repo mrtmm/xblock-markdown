@@ -31,6 +31,19 @@ class TestMarkdownXBlock(unittest.TestCase):
         fragment = block.student_view()
         self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n', fragment.content)
 
+    def test_public_view(self):
+        """
+        Test public view rendering.
+        """
+        field_data = DictFieldData({'data': '# This is h1'})
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        student_view_fragment = block.student_view()
+        self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n',
+                      student_view_fragment.content)
+        public_view_fragment = block.public_view()
+        self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n',
+                      public_view_fragment.content)
+
     def test_render_default_settings(self):
         """
         Test a basic rendering with default settings.
