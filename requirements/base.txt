@@ -1,8 +1,8 @@
 # Requirements for app run
 
-xblock-utils<2.3
-django-statici18n<2.1
-edx-i18n-tools<0.9
-Mako<1.1.6
-bleach<4.2.0
+xblock-utils<=3.0.0
+django-statici18n<2.4
+edx-i18n-tools<=0.9.1
+Mako<1.2.4
+bleach<=5.0.1
 django<4
