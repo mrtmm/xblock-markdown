@@ -11,13 +11,13 @@ and displays it as HTML.
 You may install the markdown-xblock using its setup.py, or if you prefer to use pip, run:
 
 ```shell
-pip install markdown-xblock==1.2.0
+pip install markdown-xblock==1.3.0
 ```
 
 If you prefer to install directly from Git, run:
 
 ```shell
-pip install git+https://github.com/citynetwork/markdown-xblock.git@v1.2.0
+pip install git+https://github.com/citynetwork/markdown-xblock.git@v1.3.0
 ```
 
 You may specify the `-e` flag if you intend to develop on the repo.
