@@ -1,6 +1,6 @@
 # Requirements for test runs
 
-codecov==2.0.15
+codecov==2.1.13
 diff-cover==2.6.1
 django-nose==1.4.4
 lazy==1.4
