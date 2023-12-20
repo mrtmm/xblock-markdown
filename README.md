@@ -7,20 +7,19 @@
 This XBlock allows course authors to create and edit course content in Markdown
 and displays it as HTML.
 
-## Installation
-You may install the markdown-xblock using its setup.py, or if you prefer to use pip, run:
-
-```shell
-pip install markdown-xblock==1.3.0
+## Installation with [Tutor](https://docs.tutor.edly.io)
+You may install the markdown-xblock to your Tutor environment by adding it to the `OPENEDX_EXTRA_PIP_REQUIREMENTS` list in `config.yml`:
+```
+OPENEDX_EXTRA_PIP_REQUIREMENTS:
+- markdown-xblock==1.3.0
 ```
 
-If you prefer to install directly from Git, run:
-
-```shell
-pip install git+https://github.com/citynetwork/markdown-xblock.git@v1.3.0
+Or, if you prefer to install directly from Git:
 ```
-
-You may specify the `-e` flag if you intend to develop on the repo.
+OPENEDX_EXTRA_PIP_REQUIREMENTS:
+- git+https://github.com/citynetwork/markdown-xblock.git@v1.3.0
+```
+For additional information, please refer to the official [documentation](https://docs.tutor.edly.io/configuration.html#open-edx-customisation).
 
 The minimum supported Python version is 3.8.
 
@@ -46,7 +45,7 @@ by default the following extras are included:
 It is possible to configure more
 [extras](https://github.com/trentm/python-markdown2/wiki/Extras), by
 adding to the extras list under `"markdown"` key in `XBLOCK_SETTINGS`
-at `/edx/etc/{studio|lms}.yml`
+in your [Tutor plugin](https://docs.tutor.edly.io/plugins/index.html) that patches `openedx-common-settings`
 
 By default, the `safe_mode` for `markdown2` library is enabled and set
 to `replace`, which means that writing inline HTML is not allowed and
@@ -57,24 +56,30 @@ allow inline HTML, you'll need to set `safe_mode` to `False` or `None`
 in `XBLOCK_SETTINGS`. Please note that setting `safe_mode` to the
 empty string (`''`) *also* disables safe mode.
 
-Example:
+Example (YAML plugin):
 ```
-XBLOCK_SETTINGS:
-    markdown:
-        extras:
-            - code-friendly
-            - fenced-code-blocks
-            - footnotes
-            - header-ids
-            - metadata
-            - pyshell
-            - smarty-pants
-            - strike
-            - target-blank-links
-            - use-file-vars
-            - wiki-tables
-            - tag-friendly
-        safe_mode: replace
+name: markdown
+version: 1.0.0
+patches:
+  openedx-common-settings: |
+    XBLOCK_SETTINGS["markdown"] = {
+        "extras": [
+            "code-friendly",
+            "fenced-code-blocks",
+            "footnotes",
+            "tables",
+            "header-ids",
+            "metadata",
+            "pyshell",
+            "smarty-pants",
+            "strike",
+            "target-blank-links",
+            "use-file-vars",
+            "wiki-tables",
+            "tag-friendly"
+        ],
+        "safe_mode": "escape"
+    }
 ```
 
 ## Usage notes
@@ -117,9 +122,8 @@ the `+` character as `%2B`, like so:
 ```
 
 ## Development
-If you'd like to develop on this repo or test it in [devstack](https://github.com/edx/devstack), clone this repo to your
-devstack's `~/workspace/src`, ssh into the appropriate docker container (`make lms-shell` and/or `make studio-shell`),
-run `pip install -e /edx/src/markdown-xblock`, and restart the service(s).
+If you'd like to develop on this repo in `Tutor`, follow the steps described in the
+[documentation](https://docs.tutor.edly.io/tutorials/edx-platform.html#working-on-edx-platform-python-dependencies).
 
 
 ### Running tests
