@@ -5,7 +5,6 @@ import os
 
 import markdown2
 from path import Path as path
-import pkg_resources
 from django.conf import settings as django_settings
 from xblock.core import XBlock
 from xblock.fields import List, Scope, String
@@ -72,12 +71,6 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
     editable_fields = ('display_name', 'classes')
     show_in_read_only_mode = True
 
-    @staticmethod
-    def resource_string(path):
-        """Handy helper for getting resources from our kit."""
-        data = pkg_resources.resource_string(__name__, path)
-        return data.decode('utf8')
-
     @XBlock.supports('multi_device')
     def student_view(self, context=None):  # pylint: disable=unused-argument
         """
@@ -86,11 +79,11 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         frag = Fragment()
         frag.content = xblock_loader.render_django_template('static/html/lms.html', {'self': self})
 
-        frag.add_css(self.resource_string('public/plugins/codesample/css/prism.css'))
-        frag.add_javascript(self.resource_string('public/plugins/codesample/js/prism.js'))
+        frag.add_css_url(self.runtime.local_resource_url(self, 'public/plugins/codesample/css/prism.css'))
+        frag.add_javascript_url(self.runtime.local_resource_url(self, 'public/plugins/codesample/js/prism.js'))
 
-        frag.add_css(self.resource_string('static/css/pygments.css'))
-        frag.add_css(self.resource_string('static/css/html.css'))
+        frag.add_css_url(self.runtime.local_resource_url(self, 'static/css/pygments.css'))
+        frag.add_css_url(self.runtime.local_resource_url(self, 'static/css/html.css'))
 
         return frag
 
@@ -167,24 +160,25 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         A helper method to add all necessary styles to the fragment.
         :param frag: The fragment that will hold the scripts.
         """
-        frag.add_css(self.resource_string('static/css/html.css'))
+        frag.add_css_url(self.runtime.local_resource_url(self, 'static/css/html.css'))
 
-        frag.add_css(self.resource_string('public/plugins/codemirror/codemirror-4.8/lib/codemirror.css'))
+        frag.add_css_url(self.runtime.local_resource_url(
+            self, 'public/plugins/codemirror/codemirror-4.8/lib/codemirror.css'))
 
     def add_scripts(self, frag):
         """
         A helper method to add all necessary scripts to the fragment.
         :param frag: The fragment that will hold the scripts.
         """
-        frag.add_javascript(self.resource_string('static/js/tinymce/tinymce.min.js'))
-        frag.add_javascript(self.resource_string('static/js/tinymce/themes/modern/theme.min.js'))
-        frag.add_javascript(self.resource_string('static/js/html.js'))
+        frag.add_javascript_url(self.runtime.local_resource_url(self, 'static/js/tinymce/tinymce.min.js'))
+        frag.add_javascript_url(self.runtime.local_resource_url(self, 'static/js/tinymce/themes/modern/theme.min.js'))
+        frag.add_javascript_url(self.runtime.local_resource_url(self, 'static/js/html.js'))
         frag.add_javascript(loader.load_unicode('public/studio_edit.js'))
 
         code_mirror_dir = 'public/plugins/codemirror/codemirror-4.8/'
 
-        frag.add_javascript(self.resource_string(code_mirror_dir + 'lib/codemirror.js'))
-        frag.add_javascript(self.resource_string(code_mirror_dir + 'mode/markdown/markdown.js'))
+        frag.add_javascript_url(self.runtime.local_resource_url(self, code_mirror_dir + 'lib/codemirror.js'))
+        frag.add_javascript_url(self.runtime.local_resource_url(self, code_mirror_dir + 'mode/markdown/markdown.js'))
 
     def get_editor_plugins(self):
         """

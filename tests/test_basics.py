@@ -6,8 +6,9 @@ from __future__ import print_function
 import unittest
 
 from mock import Mock, patch
+from workbench.runtime import WorkbenchRuntime
 from xblock.field_data import DictFieldData
-from xblock.test.tools import TestRuntime
+from xblock.fields import ScopeIds
 
 from markdown2 import MarkdownError
 
@@ -20,14 +21,19 @@ class TestMarkdownXBlock(unittest.TestCase):
     Unit tests for `markdown_xblock`
     """
     def setUp(self):
-        self.runtime = TestRuntime()
+        block_type = 'markdown'
+        self.runtime = WorkbenchRuntime()
+        def_id = self.runtime.id_generator.create_definition(block_type)
+        usage_id = self.runtime.id_generator.create_usage(def_id)
+
+        self.scope_ids = ScopeIds('user', block_type, def_id, usage_id)
 
     def test_render(self):
         """
         Test a basic rendering with default settings.
         """
         field_data = DictFieldData({'data': '# This is h1'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         fragment = block.student_view()
         self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n', fragment.content)
 
@@ -36,7 +42,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         Test public view rendering.
         """
         field_data = DictFieldData({'data': '# This is h1'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         student_view_fragment = block.student_view()
         self.assertIn('<div class="markdown_xblock"><h1>This is h1</h1>\n</div>\n',
                       student_view_fragment.content)
@@ -54,7 +60,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         longer interpreted as HTML).
         """
         field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         fragment = block.student_view()
         self.assertIn(
             '<div class="markdown_xblock"><p>[HTML_REMOVED]This is h1[HTML_REMOVED]</p>\n</div>\n',
@@ -69,7 +75,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         one of 'replace', 'escape', True or False.
         """
         field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         settings = {
             "extras": DEFAULT_EXTRAS,
             "safe_mode": 'this is an invalid safe mode'
@@ -89,7 +95,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         longer interpreted as HTML).
         """
         field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         settings = {
             "extras": DEFAULT_EXTRAS,
             "safe_mode": 'replace'
@@ -112,7 +118,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         longer interpreted as HTML).
         """
         field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         settings = {
             "extras": DEFAULT_EXTRAS,
             "safe_mode": True
@@ -134,7 +140,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         no longer interpreted as HTML).
         """
         field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         settings = {
             "extras": DEFAULT_EXTRAS,
             "safe_mode": 'escape'
@@ -153,7 +159,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         Expects the content *not* to be sanitized.
         """
         field_data = DictFieldData({'data': '<h1>This is h1</h1>'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         settings = {
             "extras": DEFAULT_EXTRAS,
             "safe_mode": False
@@ -171,7 +177,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         field_data = DictFieldData(
             {'data': '[test1](https://test.com/courses/course-v1:Org+Class+Version/about) [test2](https://test.com/courses/course-v1%3AOrg%2BClass%2BVersion/about)'}  # noqa: E501
         )
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         settings = {
             "extras": DEFAULT_EXTRAS,
             "safe_mode": 'replace'
@@ -196,7 +202,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         field_data = DictFieldData(
             {'data': '[test1](https://test.com/courses/course-v1:Org+Class+Version/about) [test2](https://test.com/courses/course-v1%3AOrg%2BClass%2BVersion/about)'}  # noqa: E501
         )
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         settings = {
             "extras": DEFAULT_EXTRAS,
             "safe_mode": 'escape'
@@ -221,7 +227,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         field_data = DictFieldData(
             {'data': '[test](https://test.com/courses/course-v1:Org+Class+Version/about)'}
         )
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         settings = {
             "extras": DEFAULT_EXTRAS,
             "safe_mode": False
@@ -239,7 +245,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         Test that the substitution is not performed when `system` is not present inside XBlock.
         """
         field_data = DictFieldData({'data': '%%USER_ID%% %%COURSE_ID%%'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         fragment = block.student_view()
         self.assertIn('<div class="markdown_xblock"><p>%%USER_ID%% %%COURSE_ID%%</p>\n</div>\n', fragment.content)
 
@@ -248,7 +254,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         Test that the keywords are not replaced when they're not found.
         """
         field_data = DictFieldData({'data': 'USER_ID%% %%COURSE_ID%%'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         block.system = Mock(anonymous_student_id=None)
         fragment = block.student_view()
         self.assertIn('<div class="markdown_xblock"><p>USER_ID%% %%COURSE_ID%%</p>\n</div>\n', fragment.content)
@@ -258,7 +264,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         Test replacing %%USER_ID%% with anonymous user ID.
         """
         field_data = DictFieldData({'data': '%%USER_ID%%'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         block.system = Mock(anonymous_student_id='test_user')
         fragment = block.student_view()
         self.assertIn('<div class="markdown_xblock"><p>test_user</p>\n</div>\n', fragment.content)
@@ -268,7 +274,7 @@ class TestMarkdownXBlock(unittest.TestCase):
         Test replacing %%COURSE_ID%% with HTML representation of course key.
         """
         field_data = DictFieldData({'data': '%%COURSE_ID%%'})
-        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, None)
+        block = markdown_xblock.MarkdownXBlock(self.runtime, field_data, scope_ids=self.scope_ids)
         course_locator_mock = Mock()
         course_locator_mock.html_id = Mock(return_value='test_course')
         block.system = Mock(course_id=course_locator_mock)

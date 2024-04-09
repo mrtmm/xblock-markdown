@@ -41,7 +41,7 @@ setup(
         'markdown_xblock',
     ],
     install_requires=[
-        'XBlock',
+        'XBlock<=1.9',
         'markdown2>=2.3.9',
         'Pygments>=2.0.1'
     ],

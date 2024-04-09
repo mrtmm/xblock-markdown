@@ -1,6 +1,7 @@
 # Requirements for app run
 
 xblock-utils<=4.0.0
+xblock-sdk<0.9.0
 django-statici18n<2.5
 edx-i18n-tools<1.4
 Mako==1.2.4
