@@ -8,10 +8,10 @@ from path import Path as path
 from django.conf import settings as django_settings
 from xblock.core import XBlock
 from xblock.fields import List, Scope, String
-from xblock.fragment import Fragment
-from xblockutils.resources import ResourceLoader
-from xblockutils.settings import XBlockWithSettingsMixin
-from xblockutils.studio_editable import StudioEditableXBlockMixin, loader
+from web_fragments.fragment import Fragment
+from xblock.utils.resources import ResourceLoader
+from xblock.utils.settings import XBlockWithSettingsMixin
+from xblock.utils.studio_editable import StudioEditableXBlockMixin, loader
 
 from .utils import _
 
@@ -276,7 +276,7 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         return fields
 
     @classmethod
-    def parse_xml(cls, node, runtime, keys, id_generator):
+    def parse_xml(cls, node, runtime, keys):
         """
         Use `node` to construct a new block.
         """
@@ -284,7 +284,7 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
 
         # Read markdown content from file and add to editor.
         url_name = node.get('url_name', node.get('slug'))
-        location = id_generator.create_definition(node.tag, url_name)
+        location = runtime.id_generator.create_definition(node.tag, url_name)
 
         filename = node.get('filename')
         pointer_path = "{category}/{url_path}".format(
