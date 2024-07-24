@@ -41,9 +41,10 @@ setup(
         'markdown_xblock',
     ],
     install_requires=[
-        'XBlock<=1.9',
+        'XBlock<2; python_version < "3.9"',
+        'XBlock<5; python_version >= "3.9"',
         'markdown2>=2.3.9',
-        'Pygments>=2.0.1'
+        'Pygments>=2.0.1',
     ],
     setup_requires=[
         'setuptools-scm',
