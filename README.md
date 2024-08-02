@@ -7,6 +7,19 @@
 This XBlock allows course authors to create and edit course content in Markdown
 and displays it as HTML.
 
+## Version compatibility matrix
+￼
+You must install a supported release of this plugin to match the Open
+edX and Tutor version you are deploying.
+
+| Open edX release | Tutor version     | Xblock version |
+|------------------|-------------------|----------------|
+| Olive            | `>=15.0, <16`     | `<2.0`         |
+| Palm             | `>=16.0, <17`     | `<2.0`         |
+| Quince           | `>=17.0, <18`     | `<2.0`         |
+| Redwood          | `>=18.0, <19`     | `>=2.0`        |
+
+
 ## Installation with [Tutor](https://docs.tutor.edly.io)
 You may install the markdown-xblock to your Tutor environment by adding it to the `OPENEDX_EXTRA_PIP_REQUIREMENTS` list in `config.yml`:
 ```
