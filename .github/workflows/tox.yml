@@ -21,9 +21,9 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -34,11 +34,12 @@ jobs:
         TOX_PIP_VERSION: ${{ matrix.pip-version }}
       run: tox
     - name: Upload coverage data
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
-        name: coverage-${{ matrix.python-version }}
-        path: .coverage*
+        name: coverage-${{ matrix.python-version }}-${{ matrix.pip-version }}
+        path: '.coverage.*'
         retention-days: 1
+        include-hidden-files: true
 
   report:
     needs: build
@@ -46,11 +47,11 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
     - name: Download artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: 3.8
     - name: Install dependencies
@@ -58,16 +59,16 @@ jobs:
         pip install coverage
     - name: Compile coverage data
       run: |
-        mv coverage-*/.coverage* .
+        mv coverage-*/.coverage.* .
         coverage combine
         coverage html
         coverage xml
         coverage report
     - name: Upload htmlcov archive
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: htmlcov
         path: htmlcov
         retention-days: 7
     - name: Upload to codecov
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v4
