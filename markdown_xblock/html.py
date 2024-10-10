@@ -8,16 +8,10 @@ from path import Path as path
 from django.conf import settings as django_settings
 from xblock.core import XBlock
 from xblock.fields import List, Scope, String
-try:  # XBlock 2+
-    from web_fragments.fragment import Fragment
-    from xblock.utils.resources import ResourceLoader
-    from xblock.utils.settings import XBlockWithSettingsMixin
-    from xblock.utils.studio_editable import StudioEditableXBlockMixin, loader
-except ImportError:  # Compatibility with XBlock<2
-    from xblock.fragment import Fragment
-    from xblockutils.resources import ResourceLoader
-    from xblockutils.settings import XBlockWithSettingsMixin
-    from xblockutils.studio_editable import StudioEditableXBlockMixin, loader
+from web_fragments.fragment import Fragment
+from xblock.utils.resources import ResourceLoader
+from xblock.utils.settings import XBlockWithSettingsMixin
+from xblock.utils.studio_editable import StudioEditableXBlockMixin, loader
 
 from .utils import _
 
@@ -282,21 +276,12 @@ class MarkdownXBlock(StudioEditableXBlockMixin, XBlockWithSettingsMixin, XBlock)
         return fields
 
     @classmethod
-    def parse_xml(cls, node, runtime, keys, id_generator=None):
+    def parse_xml(cls, node, runtime, keys):
         """
         Use `node` to construct a new block.
         """
         block = runtime.construct_xblock_from_class(cls, keys)
-
-        # Prior to XBlock 2.0, id_generator is passed in.
-        # Since XBlock 2.0, we grab it from the runtime.
-        #
-        # TODO: Once we decide to drop support for versions prior to
-        # XBlock 2 (i.e. Open edX releases before Redwood), we can
-        # drop id_generator from the method signature, and always rely
-        # on runtime.id_generator.
-        if not id_generator:
-            id_generator = runtime.id_generator
+        id_generator = runtime.id_generator
 
         # Read markdown content from file and add to editor.
         url_name = node.get('url_name', node.get('slug'))

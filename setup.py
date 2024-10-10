@@ -40,9 +40,9 @@ setup(
     packages=[
         'markdown_xblock',
     ],
+    python_requires='>=3.11',
     install_requires=[
-        'XBlock<2; python_version < "3.9"',
-        'XBlock<5; python_version >= "3.9"',
+        'XBlock<5',
         'markdown2>=2.3.9',
         'Pygments>=2.0.1',
     ],
